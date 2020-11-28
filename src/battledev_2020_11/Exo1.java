@@ -55,6 +55,7 @@ Effectivement, les comptes cup0ft3444455 et gn0mi12345 sont suspects, pas les au
 
 public class Exo1 {
 
+	@SuppressWarnings("resource")
 	public static void main(String[] args) {
 		String  line;
 		Scanner sc = new Scanner(System.in);

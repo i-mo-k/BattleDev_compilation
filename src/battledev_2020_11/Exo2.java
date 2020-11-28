@@ -56,6 +56,7 @@ Votre code devra renvoyer : SUSPICIOUS
 
 public class Exo2 {
 
+	@SuppressWarnings("resource")
 	public static void main(String[] args) {
 		String  line;
 		Scanner sc = new Scanner(System.in);

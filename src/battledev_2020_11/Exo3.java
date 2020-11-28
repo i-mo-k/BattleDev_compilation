@@ -1,5 +1,9 @@
 package battledev_2020_11;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 /*
@@ -43,16 +47,75 @@ La réponse devra être :
  * */
 
 public class Exo3 {
+	
+	@SuppressWarnings("resource")
 	public static void main(String[] argv) throws Exception {
 		String line;
 		Scanner sc = new Scanner(System.in);
+		int index = 0, n = 0;
+		Map<String, List<String>> tree = new HashMap<>();
 		while (sc.hasNextLine()) {
 			line = sc.nextLine();
-			/* Lisez les données et effectuez votre traitement */
+			/* si index = 0
+			 * 		lire N
+			 * sinon
+			 * 		si index <= N
+			 * 			si agent B n'existe pas
+			 * 				créer B et initialiser sa liste
+			 * 			dans B mettre l'enfant A
+			 * index ++ */
+			if (index == 0) {
+				n = Integer.parseInt(line);
+			} else {
+				if (index <= n) {
+					String[] split = line.split(" ");
+					String child = split[0];
+					String parent = split[1];
+					if (!tree.containsKey(parent)) {
+						tree.put(parent, new ArrayList<>());
+					}
+					tree.get(parent).add(child);
+				}
+			}
+			index ++;
 		}
 		/*
-		 * Vous pouvez aussi effectuer votre traitement une fois que vous avez lu toutes
-		 * les données.
+		 * initialiser liste(int) avec 1
+		 * stocker enfants de "0" dans liste et ajouter dans liste(int) le nombre de ses enfants
+		 * retirer "0" de map
+		 * tant que map non vide faire
+		 * 		initaliser compteur = 0 et tempList(enfants)
+		 * 		pour chaque enfant dans liste,
+		 * 			compteur += le nombre d'enfants de l'enfant
+		 * 			ajouter ces enfants dans tempList
+		 * 			retirer enfant de map
+		 * 		ajouter compteur dans liste(int)
+		 * 		remplacer liste par tempList
 		 */
+		List<Integer> countList = new ArrayList<>();
+		List<String> childLevel = tree.get("0");
+		tree.remove("0");
+		countList.add(childLevel.size());
+		do {
+			List<String> temp = new ArrayList<>();
+			for (String child : childLevel) {
+				List<String> grandChildren = tree.get(child);
+				if (grandChildren != null) {
+					temp.addAll(grandChildren);
+				}
+			}
+			tree.keySet().removeAll(childLevel);
+			countList.add(temp.size());
+			childLevel = temp;
+		} while (!tree.isEmpty());
+		while (countList.size() < 9) {
+			countList.add(0);
+		}
+		StringBuilder sb = new StringBuilder("1");
+		for (Integer number : countList) {
+			sb.append(" " + number);
+		}
+		
+		System.out.println(sb.toString());
 	}
 }
