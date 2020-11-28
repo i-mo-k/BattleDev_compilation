@@ -61,10 +61,10 @@ public class Exo4 {
 	public static void main(String[] args) {
 		String  line;
 		Scanner sc = new Scanner(System.in);
-		int index = 0, n = 0;
+		int index = 0;
 		List<Integer> keys = new ArrayList<>();
-		Map<Integer, Integer>result = new HashMap<>();
-		int maxXor = 0;
+		Map<String, Integer> lines = new HashMap<>();
+		Map<Integer, Integer> result = new HashMap<>();
 		while(sc.hasNextLine()) {
 			line = sc.nextLine();
 			/* si index = 0 lire m et n
@@ -77,24 +77,22 @@ public class Exo4 {
 				for (String string : line.split(" ")) {
 					keys.add(Integer.parseInt(string));
 				}
-				maxXor = xor(keys);
-				n = keys.size();
 			} else {
-				String[] split = line.split(" ");
-				int min = Integer.parseInt(split[0]);
-				int max = Integer.parseInt(split[1]);
-				int res = 0;
-				if (max - min < n / 2) {
+				if (!lines.containsKey(line)) {
+					String[] split = line.split(" ");
+					int min = Integer.parseInt(split[0]);
+					int max = Integer.parseInt(split[1]);
+					int res = 0;
 					res = xor(keys.subList(min, max + 1));
+					if (!result.containsKey(res)) {
+						result.put(res,  0);
+					}
+					result.put(res, result.get(res) + 1);
+					lines.put(line, res);
 				} else {
-					res = maxXor
-							^ xor(keys.subList(0, min))
-							^ xor(keys.subList(max + 1, keys.size()));
+					Integer xor = lines.get(line);
+					result.put(xor, result.get(xor) + 1);
 				}
-				if (!result.containsKey(res)) {
-					result.put(res,  0);
-				}
-				result.put(res, result.get(res) + 1);
 			}
 			index ++;
 		}
@@ -114,9 +112,6 @@ public class Exo4 {
 	}
 
 	private static int xor(List<Integer> keys) {
-		if (keys.isEmpty()) return 0;
-		if (keys.size() == 1) return keys.get(0);
-		if (keys.size() == 2) return keys.get(0) ^ keys.get(1);
 		Map<Integer, Integer> temp = new HashMap<>();
 		for (Integer integer : keys) {
 			if (integer != 0) {
@@ -126,23 +121,17 @@ public class Exo4 {
 				temp.put(integer, temp.get(integer) + 1);
 			}
 		}
-		boolean paired = true;
-		int toPair = 0;
 		List<Integer> list = new ArrayList<>();
 		for (Integer key : temp.keySet()) {
 			if (temp.get(key) % 2 == 1) {
-				if (paired) {
-					toPair = key;
-					paired = false;
-				} else {
-					list.add(toPair ^ key);
-					paired = true;
-				}
+				list.add(key);
 			}
 		}
-		if (!paired) {
-			list.add(toPair);
-		}
-		return xor(list);
+		if (list.isEmpty()) return 0;
+		int size = list.size();
+		if (size == 1) return list.get(0);
+		if (size == 2) return list.get(0) ^ list.get(1);
+		return xor(list.subList(0, size / 2)) ^
+				xor(list.subList(size / 2 + 1, size));
 	}
 }
