@@ -1,5 +1,9 @@
 package battledev_2020_11;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
 /*Maintenant que vous avez déchiffré toutes les communications du réseau de fake news, vous avez prévenu les autorités compétentes. Malheureusement, ces autorités ne sont pas suffisamment compétentes pour arrêter le réseau de fake news à temps pour les élections de 2022. Vous devez donc prendre les choses en main pour empêcher les fake news de se répandre.
 
 Pour chacun des N articles de fake news sortis au cours des derniers mois, vous avez un article de debunk sorti à la même période. Un article est représenté par une string S = S[1]...S[|S|] représentant une suite de sujets. Chaque caractère de la chaîne de caractères représente donc un sujet, et un même sujet peut être traité plusieurs fois dans un article (avec des arguments différents).
@@ -46,9 +50,102 @@ DEBUNK*/
 
 public class Exo6 {
 
+	@SuppressWarnings("resource")
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+		System.err.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+		String  line;
+		int index = 0;
+		int totalConfs = 0;
+		Scanner sc = new Scanner(System.in);
+		while(sc.hasNextLine()) {
+			line = sc.nextLine();
+			System.err.println(line);
+			/*
+			 * si index != 0
+			 * 		ajouter me nombre de confrontations
+			 * */
+			if (index != 0) {
+				totalConfs += confrontArticles(line);
+			}
+			index ++;
+		}
+	/* si impair, dire debunk
+	 * si pair dire fake*/
+		if (totalConfs % 2 == 0) {
+			System.out.println("FAKE");
+			return;
+		}
+		System.out.println("DEBUNK");
 	}
 
+	private static int confrontArticles(String line) {
+		String[] split = line.split(" ");
+		char[] fake = split[0].toCharArray();
+		char[] debunk = split[1].toCharArray();
+		
+		List<Argument> fakeTopics = new ArrayList<>();
+		List<Argument> debunkTopics = new ArrayList<>();
+		for (int i = 0; i < fake.length; i++) {
+			addNewArgument(String.valueOf(fake[i]), fakeTopics);
+			addNewArgument(String.valueOf(debunk[i]), debunkTopics);
+		}
+		
+		int commonCount = 0;
+		/*
+		 * pour la 1re lettre de fake
+		 * 		si on trouve le mm arg,
+		 * 			on retire lettre dans les deux listes
+		 * 			on garde l'indice du 2nd et on continue à chercher tant qu'on arrive pas au bout
+		 * 		sinon
+		 * 			on retire lettre de la 1re liste*/
+		while (!fakeTopics.isEmpty()) {
+			if (containSimilarPattern(fakeTopics, debunkTopics)) {
+				commonCount ++;
+			}
+			if (!fakeTopics.isEmpty()) {
+				fakeTopics.remove(0);
+			}
+		}
+		return commonCount;
+	}
+
+	private static void addNewArgument(String topic, List<Argument> fakeTopics) {
+		int i = 0;
+		for (Argument argument : fakeTopics) {
+			if (argument.topic.equals(topic)) {
+				i++;
+			}
+		}
+		fakeTopics.add(new Argument(topic, i));
+	}
+
+	private static boolean containSimilarPattern(List<Argument> fakeTopics, List<Argument> debunkTopics) {
+		boolean found = false;
+		int index = 0;
+		while (index < debunkTopics.size() && !fakeTopics.isEmpty()) {
+			boolean corresponds = fakeTopics.get(0).
+					correspondsTo(debunkTopics.get(index));
+			found |= corresponds;
+			if (corresponds) {
+				fakeTopics.remove(0);
+				debunkTopics.remove(index);
+			}
+			else {
+				index ++;
+			}
+		}
+		return found;
+	}
+	
+	private static class Argument {
+		String topic;
+		int argument;
+		Argument(String topic, int argument) {
+			this.topic = topic;
+			this.argument = argument;
+		}
+		boolean correspondsTo(Argument arg) {
+			return this.topic.equals(arg.topic) && this.argument == arg.argument;
+		}
+	}
 }

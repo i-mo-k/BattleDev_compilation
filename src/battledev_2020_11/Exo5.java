@@ -1,7 +1,6 @@
 package battledev_2020_11;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -50,15 +49,18 @@ public class Exo5 {
 		String  line;
 		Scanner sc = new Scanner(System.in);
 		long sigma = 0;
-		while(sc.hasNextLine()) {
-			line = sc.nextLine();
-			System.err.println("line = " + line);
-			sigma = modulo(line) + LAMBDA;
-			/* changer le line en chaine d'entier ascii
-			 * calculer la somme totale et la valeur cible
-			 * 		-> remplacé par son modulo pour l'espace
-			 * calculer sigma la nouvelle somme avec lambda */
-		}
+		line = "0!9$3?";
+		System.err.println("line = " + line);
+		sigma = modulo(line) + LAMBDA;
+//		while(sc.hasNextLine()) {
+//			line = sc.nextLine();
+//			System.err.println("line = " + line);
+//			sigma = modulo(line) + LAMBDA;
+//			/* changer le line en chaine d'entier ascii
+//			 * calculer la somme totale et la valeur cible
+//			 * 		-> remplacé par son modulo pour l'espace
+//			 * calculer sigma la nouvelle somme avec lambda */
+//		}
 		/* tant que sigma n'est pas comprise entre 33 et 126,
 		 * 		calculer le reste de sigma par le diviseur
 		 * 		tant que u n'est pas compris entre 33 et 126
